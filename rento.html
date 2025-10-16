@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rento - Visual Diagrams & User Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s;
+        }
+        
+        .content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .diagram-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        
+        /* System Architecture */
+        .architecture {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .arch-layer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .arch-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .arch-box h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .arch-box p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .arrow-down {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        /* User Journey */
+        .journey {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .journey-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .journey-section.owner {
+            border-left-color: #4CAF50;
+        }
+        
+        .journey-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .journey-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .step {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.3s;
+        }
+        
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .owner .step-number {
+            background: #4CAF50;
+        }
+        
+        .step h4 {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .step p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        /* Flow Diagram */
+        .flow-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        .flow-column {
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+        }
+        
+        .flow-box {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .flow-box.admin {
+            border-color: #ff6b6b;
+        }
+        
+        .flow-box.owner {
+            border-color: #4CAF50;
+        }
+        
+        .flow-box h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+        
+        .flow-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .flow-box li {
+            padding: 8px 0;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .flow-box li:last-child {
+            border-bottom: none;
+        }
+        
+        .flow-box li:before {
+            content: "✓ ";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .journey-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .arch-layer {
+                flex-direction: column;
+            }
+            
+            .flow-column {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Rento Platform</h1>
+            <p>Visual Guide & User Journey Maps</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showTab(0)">System Architecture</div>
+            <div class="tab" onclick="showTab(1)">Home Seeker Journey</div>
+            <div class="tab" onclick="showTab(2)">House Owner Journey</div>
+            <div class="tab" onclick="showTab(3)">Module Overview</div>
+        </div>
+        
+        <!-- Tab 1: System Architecture -->
+        <div class="content active">
+            <h2 class="diagram-title">System Architecture Overview</h2>
+            <div class="architecture">
+                <div class="arch-layer">
+                    <div class="arch-box">
+                        <h3>👥 Users</h3>
+                        <p>Home Seekers<br>House Owners<br>Admin</p>
+                    </div>
+                </div>
+                
+                <div class="arrow-down">⬇</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-box">
+                        <h3>📱 Mobile App (Android)</h3>
+                        <p>User Interface<br>React Native / Native Android</p>
+                    </div>
+                    <div class="arch-box">
+                        <h3>💻 Admin Panel (Web)</h3>
+                        <p>Management Dashboard<br>React.js / Vue.js</p>
+                    </div>
+                </div>
+                
+                <div class="arrow-down">⬇</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-box">
+                        <h3>🔌 Backend API</h3>
+                        <p>Node.js + Express<br>RESTful APIs<br>JWT Authentication</p>
+                    </div>
+                </div>
+                
+                <div class="arrow-down">⬇</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-box">
+                        <h3>💾 Database</h3>
+                        <p>MongoDB / PostgreSQL<br>User & Property Data</p>
+                    </div>
+                    <div class="arch-box">
+                        <h3>☁️ Cloud Storage</h3>
+                        <p>AWS S3 / Firebase<br>Property Images</p>
+                    </div>
+                </div>
+                
+                <div class="arrow-down">⬇</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-box">
+                        <h3>🗺️ Google Maps</h3>
+                        <p>Location & Navigation</p>
+                    </div>
+                    <div class="arch-box">
+                        <h3>💳 Payment Gateway</h3>
+                        <p>Razorpay / Paytm</p>
+                    </div>
+                    <div class="arch-box">
+                        <h3>📨 SMS Gateway</h3>
+                        <p>OTP Verification</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 2: Home Seeker Journey -->
+        <div class="content">
+            <h2 class="diagram-title">🔍 Home Seeker User Journey</h2>
+            <div class="journey">
+                <div class="journey-section">
+                    <div class="journey-title">
+                        <span class="icon">🚀</span>
+                        <span>Getting Started</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <h4>Download App</h4>
+                            <p>User downloads Rento app from Google Play Store</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <h4>Register/Login</h4>
+                            <p>Enter mobile number → Receive OTP → Verify → Create profile as "Home Seeker"</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <h4>Set Preferences</h4>
+                            <p>Add location preferences, budget range, and property type requirements</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-section">
+                    <div class="journey-title">
+                        <span class="icon">🏘️</span>
+                        <span>Discovering Properties</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <h4>Browse Map View</h4>
+                            <p>Opens app → Sees properties marked on Google Maps near their location</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">5</div>
+                            <h4>Apply Filters</h4>
+                            <p>Filters by: BHK, Price (₹3000-₹5000), Location radius, Furnishing, Bachelors allowed</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">6</div>
+                            <h4>View Properties</h4>
+                            <p>Clicks on property pin → Views photos, details, amenities, price → Saves favorites</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-section">
+                    <div class="journey-title">
+                        <span class="icon">📞</span>
+                        <span>Connecting with Owner</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">7</div>
+                            <h4>Interested in Property</h4>
+                            <p>Finds perfect match → Wants to contact owner → Contact is hidden (shows "Pay ₹1 to unlock")</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">8</div>
+                            <h4>Make Payment</h4>
+                            <p>Clicks "Unlock Contact" → Pays ₹1 via UPI/Card/Wallet → Payment confirmed instantly</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">9</div>
+                            <h4>Contact Owner</h4>
+                            <p>Owner's number revealed → Options: Call directly, WhatsApp chat, Get navigation to property</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-section">
+                    <div class="journey-title">
+                        <span class="icon">🏡</span>
+                        <span>Property Visit & Closure</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">10</div>
+                            <h4>Schedule Visit</h4>
+                            <p>Calls owner → Schedules property visit → Uses in-app navigation to reach location</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">11</div>
+                            <h4>Visit Property</h4>
+                            <p>Visits property → Checks amenities → Discusses terms with owner</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">12</div>
+                            <h4>Decision Making</h4>
+                            <p>If interested: Finalizes deal with owner | If not: Continues searching other properties</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 3: House Owner Journey -->
+        <div class="content">
+            <h2 class="diagram-title">🏠 House Owner User Journey</h2>
+            <div class="journey">
+                <div class="journey-section owner">
+                    <div class="journey-title">
+                        <span class="icon">🚀</span>
+                        <span>Getting Started</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <h4>Download App</h4>
+                            <p>Downloads Rento app from Play Store</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <h4>Register/Login</h4>
+                            <p>Mobile OTP verification → Creates profile → Selects "House Owner" role</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <h4>Profile Setup</h4>
+                            <p>Adds name, email, alternate contact, verification documents</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-section owner">
+                    <div class="journey-title">
+                        <span class="icon">📝</span>
+                        <span>Creating Property Listing</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <h4>Start New Listing</h4>
+                            <p>Clicks "Add Property" → Chooses property type (Independent House / Apartment)</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">5</div>
+                            <h4>Fill Property Details</h4>
+                            <p>BHK: 2BHK → Bathrooms: 2 → Furnishing: Semi-furnished → Area: 1200 sqft → Floor: 3rd → Bachelors: Yes</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">6</div>
+                            <h4>Set Location</h4>
+                            <p>Uses GPS to pin exact location on map → Adds complete address → Nearby landmarks</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">7</div>
+                            <h4>Upload Photos</h4>
+                            <p>Uploads 5-8 clear photos: Living room, bedrooms, kitchen, bathroom, building exterior</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">8</div>
+                            <h4>Set Price & Description</h4>
+                            <p>Monthly rent: ₹15,000 → Writes detailed description with amenities and nearby facilities</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-section owner">
+                    <div class="journey-title">
+                        <span class="icon">💳</span>
+                        <span>Payment & Activation</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">9</div>
+                            <h4>Review Listing</h4>
+                            <p>Reviews all details → Preview how listing will appear to seekers</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">10</div>
+                            <h4>Subscribe to List</h4>
+                            <p>Clicks "Go Live" → Prompted to pay ₹29/month subscription</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">11</div>
+                            <h4>Make Payment</h4>
+                            <p>Pays ₹29 via UPI/Card/Wallet → Payment successful</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">12</div>
+                            <h4>Listing Goes Live</h4>
+                            <p>Property appears on map → Visible to all home seekers in that area → Receives confirmation</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-section owner">
+                    <div class="journey-title">
+                        <span class="icon">📊</span>
+                        <span>Managing Listing & Inquiries</span>
+                    </div>
+                    <div class="journey-steps">
+                        <div class="step">
+                            <div class="step-number">13</div>
+                            <h4>Track Performance</h4>
+                            <p>Views analytics: 47 views this week, 8 contacts unlocked, 3 calls received</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">14</div>
+                            <h4>Receive Inquiries</h4>
+                            <p>Gets calls from interested seekers → WhatsApp messages → Schedules property visits</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">15</div>
+                            <h4>Show Property</h4>
+                            <p>Meets seekers → Shows property → Discusses terms, rent, deposit → Answers questions</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">16</div>
+                            <h4>Close Deal</h4>
+                            <p>Finalizes with tenant → Signs agreement → Marks property as "Rented" in app → Listing auto-paused</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 4: Module Overview -->
+        <div class="content">
+            <h2 class="diagram-title">Module Overview & Features</h2>
+            <div class="flow-container">
+                <div class="flow-column">
+                    <div class="flow-box">
+                        <h3>🔍 Home Seeker Module</h3>
+                        <ul>
+                            <li>Register & Login (OTP/Email)</li>
+                            <li>Search properties on map</li>
+                            <li>Filter by location, price, BHK</li>
+                            <li>View property details & photos</li>
+                            <li>Save favorite properties</li>
+                            <li>Pay ₹1 to unlock contact</li>
+                            <li>Call, WhatsApp, Navigate</li>
+                            <li>View payment history</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="flow-column">
+                    <div class="flow-box owner">
+                        <h3>🏠 House Owner Module</h3>
+                        <ul>
+                            <li>Register & Login (OTP/Email)</li>
+                            <li>Create property listing</li>
+                            <li>Upload property photos (5-8)</li>
+                            <li>Set location on GPS map</li>
+                            <li>Add price & description</li>
+                            <li>Pay ₹29/month subscription</li>
+                            <li>Manage multiple properties</li>
+                            <li>View listing analytics</li>
+                            <li>Mark as Rented/Available</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="flow-column">
+                    <div class="flow-box admin">
+                        <h3>⚙️ Admin Panel Module</h3>
+                        <ul>
+                            <li>Dashboard with KPIs</li>
+                            <li>User management (view/block)</li>
+                            <li>Property listing approval</li>
+                            <li>Remove fake/spam listings</li>
+                            <li>Payment transaction logs</li>
+                            <li>Revenue tracking</li>
+                            <li>Export reports (CSV)</li>
+                            <li>Send notifications</li>
+                            <li>Manage subscription plans</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 15px;">
+                <h3 style="text-align: center; color: #333; margin-bottom: 20px; font-size: 1.5em;">💡 Key Integrations</h3>
+                <div class="flow-container">
+                    <div class="flow-column" style="max-width: 300px;">
+                        <div class="flow-box" style="border-color: #FF9800;">
+                            <h3>🗺️ Google Maps API</h3>
+                            <ul>
+                                <li>Property location marking</li>
+                                <li>Search by location</li>
+                                <li>Navigation to property</li>
+                                <li>Distance calculation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flow-column" style="max-width: 300px;">
+                        <div class="flow-box" style="border-color: #2196F3;">
+                            <h3>💳 Payment Gateway</h3>
+                            <ul>
+                                <li>Razorpay/Paytm integration</li>
+                                <li>₹1 contact unlock</li>
+                                <li>₹29 subscription</li>
+                                <li>Secure transactions</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flow-column" style="max-width: 300px;">
+                        <div class="flow-box" style="border-color: #9C27B0;">
+                            <h3>📨 SMS Gateway</h3>
+                            <ul>
+                                <li>OTP verification</li>
+                                <li>Login authentication</li>
+                                <li>Payment confirmations</li>
+                                <li>Notification alerts</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flow-column" style="max-width: 300px;">
+                        <div class="flow-box" style="border-color: #4CAF50;">
+                            <h3>☁️ Cloud Storage</h3>
+                            <ul>
+                                <li>Property image storage</li>
+                                <li>AWS S3 / Firebase</li>
+                                <li>Fast image loading</li>
+                                <li>CDN delivery</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+        }
+    </script>
+</body>
+</html>
